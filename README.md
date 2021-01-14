@@ -14,9 +14,11 @@ If there is poor performace when attaching to and developing in the containers, 
 
 To recap a bit, When you develop this way, only this deployment repo will be cloned onto your local machine's userspace; the repos of the services that make up the app will exist only in docker volumes, and you will work on them by attaching to the appropriate container. Please see dev/docker-compose.yaml for more details.
 
+./up.sh and ./down.sh in the dev/ directory are helper scripts for running docker-compose up and down. The up one looks for an .env file in the dev/ directory. Please see dev/docker-compose.yaml for details.
+
 ## prod
 
-This is a template for deploying a full stack app on a kubernetes cluster using kustomize. Set up a github action to run kustomize in the prod directory and then deploy the resulting yaml to your cluster.
+This is a template for deploying a full stack app on a kubernetes cluster using kustomize. Set up a github action to run kustomize in the prod/ directory and then deploy the resulting yaml to your cluster.
 
 Whenever you update one of the repos of the services that make up the application, change the image for that service in this repo to the new one and commit and push. (your service repos should build images tagged with the git commit hash so it will be different after every commit).
 
