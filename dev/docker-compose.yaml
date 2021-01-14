@@ -1,43 +1,38 @@
 version: '3.3'
 services:
-    postgres:
-        image: postgres
+    service1: #replace with service name
+        image: ghcr.io/brandonsimon1/devpod-node:38d05bd0cd67968e740f4d49682c88877c5fd1d0
+        # this is a node devpod image.
+        # replace this image with 
+        # another devpod image with
+        # a different base image 
+        # if the service 
+        # is not a node service
         environment:
-            POSTGRES_PASSWORD: $POSTGRES_PASSWORD 
-            POSTGRES_USER: $POSTGRES_USER
-        expose:
-            - 5432
-
-    git-cloner:
-        build:
-            context: . 
-            args:
-                GITHUB_USERNAME: $GITHUB_USERNAME
-                GITHUB_PASSWORD: $GITHUB_PASSWORD
-                NAME: $NAME
-                EMAIL: $EMAIL
-        environment:
-            REPO_URL: $REPO_URL 
+            REPO_URL: #REPLACE WITH REPO URL 
+            GITHUB_USERNAME: $GITHUB_USERNAME
+            GITHUB_PASSWORD: $GITHUB_PASSWORD
+            NAME: $NAME
+            EMAIL: $EMAIL
+        
         volumes:
-            - code:/repo
+            - service1code:/repo
+            # the target of the volume here,
+            # '/repo', is a characteristic
+            # of the devpod image being used.
+            # It is where it clones the repo
 
-    backend:
-        image: node
-        command: cd /repo/backend && yarn start
-        volumes:
-            - code:/repo
-
-    frontend:
-        image: node
-        command: cd /repo/frontend && yarn start
-        volumes:
-            - code:/repo
-
-    db-migrator:
-        image: node
-        command: cd /repo/database && yarn db-migrate-up 
-        volumes:
-            - code:/repo
+    # add more devcointainers 
+    # with different base images and 
+    # repo targets to develop
+    # multiple services together
 
 volumes:
-    repo:
+    # add a volume for each service's code
+    # so that your work will be saved
+    # if the container crashes
+    # or you do docker-compose down.
+    # If you want to start over, you must
+    # remove the volumes explicitely 
+    # with the dockcer cli 
+    service1code:
