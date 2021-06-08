@@ -1,22 +1,22 @@
-name: helm-deploy 
-on: [push]
+name: Bump version
+on:
+  push:
+    branches:
+      - main
 jobs:
-  deploy-helm:
+  tag-and-deploy-helm:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
       - name: Check out repository code
         uses: actions/checkout@v2
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v5.5
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Helm Deploy
         uses: vimeda/helm@v1.6.6
         with: 
-          namespace: default
-          release: 
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: List files in the repository
-        run: |
-          ls ${{ github.workspace }}
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+          namespace: ${{ github.repository }} 
+          release: ${{ github.repository }}-${{ steps.tag_version.outputs.new_tag }}
+          chart: .
