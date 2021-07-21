@@ -1,6 +1,69 @@
 version: '3'
 
 services:
+  frontend:
+    image: node
+    stdin_open: true
+    ports:
+      - 3000:3000
+    environment:
+      REACT_APP_GRAPHQL_URI: http://localhost:4000/graphql
+      GRAPHQL_URI: http://backend:4000/graphql
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        cd /workspace/full-stack-template/frontend
+        yarn start 
+    volumes:
+      - workspace:/workspace:cached
+
+  backend:
+    image: node
+    ports:
+      - 4000:4000
+    environment:
+      PGHOST: postgres
+      PGPASSWORD: dfasdff31
+      PGUSER: graphile 
+      PGDATABASE: graphile 
+      GRAPHILE_JWT_SECRET: asdk23dsd
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        cd /workspace/full-stack-template/backend
+        yarn start 
+    volumes:
+      - workspace:/workspace:cached
+      
+  db-migrator:
+    volumes:
+      - workspace:/workspace:cached
+    image: node
+    environment:
+      PGHOST: postgres
+      PGPASSWORD: dfasdff31
+      PGUSER: graphile 
+      PGDATABASE: graphile 
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        cd /workspace/full-stack-template/database
+        yarn db-migrate-up 
+        sleep infinity
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: dfasdff31
+      POSTGRES_USER: graphile 
+    ports:
+      - 5432
+    volumes:
+      - db:/var/lib/postgresql/data/
+
   workspace:
     build: 
       context: .
@@ -35,3 +98,4 @@ services:
 
 volumes: 
   workspace:
+  db:
