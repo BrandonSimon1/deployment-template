@@ -61,6 +61,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           context: ./images/frontend
+          file: ./images/frontend/Dockerfile
 
   backend:
     needs: tag
@@ -96,6 +97,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           context: ./images/backend
+          file: ./images/backend/Dockerfile
 
   database:
     needs: tag
@@ -131,3 +133,4 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           context: ./images/database
+          file: ./images/database/Dockerfile
