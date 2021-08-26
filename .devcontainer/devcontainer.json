@@ -25,9 +25,10 @@
 	"extensions": [
 		"dbaeumer.vscode-eslint",
 		"mtxr.sqltools",
-		"mtxr.sqltools-driver-pg"
+		"mtxr.sqltools-driver-pg",
+		"hashicorp.terraform"
 	],
-
+	"postCreateCommand": "bash -c 'for k in /workspace/services/{backend,database-migration,frontend}; do cd $k; yarn; done; cd /workspace/services/database; cd /workspace/services/database-migration; yarn db-migrate-up'",
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [3000, 5432],
 

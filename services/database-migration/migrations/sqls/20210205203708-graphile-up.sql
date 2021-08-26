@@ -3,8 +3,9 @@ revoke all on schema public from public;
 alter default privileges revoke all on sequences from public;
 alter default privileges revoke all on functions from public;
 
-create role graphile;
 create role graphile_visitor;
+
+grant graphile_visitor to graphile;
 -- Of course we want our database owner to be able to do anything inside the
 -- database, so we grant access to the `public` schema:
 grant all on schema public to graphile;
