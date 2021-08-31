@@ -21,7 +21,26 @@ provider "helm" {
 
 variable "namespace" {
   type = string
-  default = "full-stack-template"
+}
+
+variable "postgresql-password" {
+  type = string
+}
+
+variable "postgresql-database" {
+  type = string
+}
+
+variable "postgresql-user" {
+  type = string
+}
+
+variable "graphile-password" {
+  type = string
+}
+
+locals {
+  react-app-graphql-uri = "backend.${var.namespace}.svc.cluster.local:4000"
 }
 
 resource "helm_release" "postgresql" {
@@ -35,14 +54,14 @@ resource "helm_release" "postgresql" {
 	  <<EOB
       global:
         postgresql:
-          postgresqlPassword: ${local.postgresql-password}
-          postgresqlDatabase: ${local.postgresql-database}
-          postgresqlUsername: ${local.postgresql-user}
+          postgresqlPassword: ${var.postgresql-password}
+          postgresqlDatabase: ${var.postgresql-database}
+          postgresqlUsername: ${var.postgresql-user}
       initdbScripts:
         initial.sh: |
           ${file("../services/database-migration/initial.sh")} 
       extraEnv:
-        GRAPHILE_PASSWORD: ${local.graphile-password}
+        GRAPHILE_PASSWORD: ${var.graphile-password}
 	  EOB
   ]
 }
@@ -51,10 +70,10 @@ data "kubectl_path_documents" "manifests" {
     pattern = "../services/*/k8s.yml"
     vars = {
       namespace = var.namespace
-      postgresql-user = local.postgresql-user
-      postgresql-password = local.postgresql-password
-      postgresql-database = local.postgresql-database
-      graphile-password = local.graphile-password
+      postgresql-user = var.postgresql-user
+      postgresql-password = var.postgresql-password
+      postgresql-database = var.postgresql-database
+      graphile-password = var.graphile-password
       react-app-graphql-uri = local.react-app-graphql-uri
     }
 }
