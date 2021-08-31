@@ -7,6 +7,7 @@ sources:
     handler:
       postgraphile:
         connectionString: postgres://graphile:${GRAPHILE_PASSWORD}@${PGHOST}:5432/${PGDATABASE}
+        ownerConnectionString: postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}:5432/${PGDATABASE} 
         cacheIntrospection: true
         appendPlugins:
           - '@graphile-contrib/pg-simplify-inflector'
@@ -25,7 +26,7 @@ sources:
           simpleCollections: both
           extendErrors:
             - errcode
-          graphiql: true 
+          graphiql: false 
           disableQueryLog: true
           jwtVerifyOptions:
             ignoreExpiration: false
