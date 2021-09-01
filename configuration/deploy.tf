@@ -10,12 +10,16 @@ terraform {
 }
 
 provider "kubectl" {
-  config_path = "~/.kube/config"
+  config_path = var.kubeconfig 
+}
+
+provider "kubernetes" {
+  config_path = var.kubeconfig 
 }
 
 provider "helm" {
   kubernetes {
-    config_path = "~/.kube/config"
+    config_path = var.kubeconfig 
   }
 }
 
@@ -23,24 +27,33 @@ variable "namespace" {
   type = string
 }
 
-variable "postgresql-password" {
+variable "kubeconfig" {
   type = string
+  default = "~/.kube/config"
 }
 
-variable "postgresql-database" {
-  type = string
+resource "random_password" "default-postgresql-password" {
+  length           = 16
+  special          = true
 }
 
-variable "postgresql-user" {
-  type = string
-}
-
-variable "graphile-password" {
-  type = string
+resource "random_password" "default-graphile-password" {
+  length           = 16
+  special          = true
 }
 
 locals {
   react-app-graphql-uri = "backend.${var.namespace}.svc.cluster.local:4000"
+  graphile-password = random_password.default-graphile-password
+  postgresql-user = "postgres"
+  postgresql-database = "postgres"
+  postgresql-password = random_password.postgresql-password
+}
+
+resource "kubernetes_namespace" "app-namespace" {
+  metadata {
+    name = var.namespace 
+  }
 }
 
 resource "helm_release" "postgresql" {
@@ -48,7 +61,6 @@ resource "helm_release" "postgresql" {
   repository = "https://charts.bitnami.com/bitnami"
   chart      = "postgresql"
   namespace = var.namespace
-  create_namespace = true
   
   values = [
 	  <<EOB
@@ -70,10 +82,10 @@ data "kubectl_path_documents" "manifests" {
     pattern = "../services/*/k8s.yml"
     vars = {
       namespace = var.namespace
-      postgresql-user = var.postgresql-user
-      postgresql-password = var.postgresql-password
-      postgresql-database = var.postgresql-database
-      graphile-password = var.graphile-password
+      postgresql-user = local.postgresql-user
+      postgresql-password = local.postgresql-password
+      postgresql-database = local.postgresql-database
+      graphile-password = local.graphile-password
       react-app-graphql-uri = local.react-app-graphql-uri
     }
 }
