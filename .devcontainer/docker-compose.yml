@@ -14,12 +14,15 @@ services:
 
     volumes:
       - ..:/workspace:cached
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ~/.kube/:/usr/local/share/kube-localhost
       
     # Overrides default command so things don't shut down after the process ends.
     command: sleep infinity
 
     # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
     network_mode: service:db
+    init: true
 
     # Uncomment the next line to use a non-root user for all processes.
     # user: node
@@ -33,6 +36,7 @@ services:
       PGUSER: postgres
       PGDATABASE: postgres
       PGHOST: db
+      SYNC_LOCALHOST_KUBECONFIG: "true"
 
   db:
     image: postgres:latest

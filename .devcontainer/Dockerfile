@@ -25,3 +25,13 @@ RUN curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
 RUN apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
 RUN apt update
 RUN apt install -y terraform
+
+COPY scripts/docker-debian.sh /tmp/library-scripts/
+RUN apt-get update && bash /tmp/library-scripts/docker-debian.sh
+ENTRYPOINT ["/usr/local/share/docker-init.sh"]
+
+COPY scripts/kubectl-helm-debian.sh /tmp/library-scripts/
+RUN apt-get update && bash /tmp/library-scripts/kubectl-helm-debian.sh
+
+COPY scripts/copy-kube-config.sh /usr/local/share/
+RUN echo "source /usr/local/share/copy-kube-config.sh" | tee -a /home/node/.bashrc >> /home/node/.bashrc
