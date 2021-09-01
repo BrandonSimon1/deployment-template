@@ -39,7 +39,7 @@ services:
     restart: unless-stopped
     volumes:
       - postgres-data:/var/lib/postgresql/data
-      - ../services/database-migration/initial.sh:/docker-entrypoint-initdb.d/initial.sh
+      - ../services/database/initial.sh:/docker-entrypoint-initdb.d/initial.sh
     environment:
       GRAPHILE_PASSWORD: asdfkei83k4
       POSTGRES_PASSWORD: postgres
