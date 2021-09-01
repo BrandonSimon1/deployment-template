@@ -20,3 +20,8 @@ RUN if [ "$USER_GID" != "1000" ] || [ "$USER_UID" != "1000" ]; then groupmod --g
 
 RUN apt update
 RUN apt-get -y install postgresql-client
+RUN apt -y install software-properties-common 
+RUN curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+RUN apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+RUN apt update
+RUN apt install -y terraform
