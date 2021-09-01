@@ -3,8 +3,9 @@ on:
   push:
     branches:
       - main
+
 jobs:
-  tag-and-deploy-helm:
+  tag-and-deploy-terraform:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
@@ -14,9 +15,17 @@ jobs:
         uses: mathieudutour/github-tag-action@v5.5
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-      # - name: Helm Deploy
-      #   uses: vimeda/helm@v1.6.6
-      #   with: 
-      #     namespace: ${{ github.repository }} 
-      #     release: ${{ github.repository }}-${{ steps.tag_version.outputs.new_tag }}
-      #     chart: .
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_TOKEN }}
+      - name: Terraform Init
+        id: init
+        run: terraform init
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+      - name: Terraform Apply
+        run: terraform -chdir=configuration apply -auto-approve
+
+
