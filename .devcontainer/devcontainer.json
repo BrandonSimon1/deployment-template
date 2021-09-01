@@ -27,7 +27,8 @@
 		"mtxr.sqltools",
 		"mtxr.sqltools-driver-pg",
 		"hashicorp.terraform",
-		"ms-azuretools.vscode-docker"
+		"ms-azuretools.vscode-docker",
+		"ms-kubernetes-tools.vscode-kubernetes-tools"
 	],
 	"postCreateCommand": "bash -c 'for k in /workspace/services/{backend,database,frontend}; do cd $k; yarn; done; cd /workspace/services/database; yarn db-migrate-up'",
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
