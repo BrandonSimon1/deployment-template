@@ -1,19 +1,19 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: MYAPP
-  namespace: default
+  name: ${app-name}-database
+  namespace: ${namespace}
   labels:
-    app: MYAPP
+    app: ${app-name}-database
 spec:
   template:
     metadata:
-      name: MYAPP
+      name: ${app-name}-database
       labels:
-        app: MYAPP
+        app: ${app-name}-database
     spec:
       containers:
-      - name: MYAPP
+      - name: ${app-name}-database
         image: python:3.7.6-alpine3.10
         command: ['sh', '-c', 'python3 manage.py makemigrations && python3 manage.py migrate']
         env:
