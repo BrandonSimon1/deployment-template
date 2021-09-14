@@ -7,8 +7,6 @@ on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -134,3 +132,36 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           context: ./images/database-migration
           file: ./images/database-migration/Dockerfile
+
+  tag-and-deploy-terraform:
+    needs: tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Bump version and push tag
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v5.5
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_TOKEN }}
+      - name: Terraform Init
+        id: init
+        run: terraform init
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+      - name: Terraform Apply
+        run: |
+          terraform \
+            -chdir=configuration \
+            apply \
+            -auto-approve \
+            -var namespace=${{ github.repository }} \
+            -var app-name=${{ github.repository }} \ 
+            -var kubeconfig=${{ secrets.KUBECONFIG }} \
+            -var image-name-base=ghcr.io/${{github.actor}}/${{github.repository}} \
+            -var image-tag=${{ steps.meta.outputs.tags }}

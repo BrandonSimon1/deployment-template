@@ -7,6 +7,15 @@ terraform {
       version = ">= 1.7.0"
     }
   }
+
+  backend "remote" {
+    hostname = "app.terraform.io"
+    organization = "new-moon-technologies"
+
+    workspaces {
+      name = "full-stack-template"
+    }
+  }
 }
 
 provider "kubectl" {
@@ -24,6 +33,18 @@ provider "helm" {
 }
 
 variable "namespace" {
+  type = string
+}
+
+variable "app-name" {
+  type = string
+}
+
+variable "image-name-base" {
+  type = string
+}
+
+variable "image-tag" {
   type = string
 }
 
@@ -81,7 +102,10 @@ resource "helm_release" "postgresql" {
 data "kubectl_path_documents" "manifests" {
     pattern = "../services/*/k8s.yml"
     vars = {
+      app-name = var.app-name
       namespace = var.namespace
+      image-tag = var.image-tag
+      image-name-base = var.image-name-base
       postgresql-user = local.postgresql-user
       postgresql-password = local.postgresql-password
       postgresql-database = local.postgresql-database
