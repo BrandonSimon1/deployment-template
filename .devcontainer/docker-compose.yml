@@ -46,6 +46,7 @@ services:
       - ../services/database/initial.sh:/docker-entrypoint-initdb.d/initial.sh
     environment:
       GRAPHILE_PASSWORD: asdfkei83k4
+      GRAPHILE_JWT_SECRET: asdkkwk44
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
       POSTGRES_DB: postgres
