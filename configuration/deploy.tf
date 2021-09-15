@@ -63,9 +63,15 @@ resource "random_password" "default-graphile-password" {
   special          = true
 }
 
+resource "random_string" "graphile-jwt-secret" {
+  length           = 16
+  special          = true 
+}
+
 locals {
   react-app-graphql-uri = "backend.${var.namespace}.svc.cluster.local:4000"
   graphile-password = random_password.default-graphile-password
+  graphile-jwt-secret = random_string.graphile-jwt-secret
   postgresql-user = "postgres"
   postgresql-database = "postgres"
   postgresql-password = random_password.postgresql-password
@@ -110,6 +116,7 @@ data "kubectl_path_documents" "manifests" {
       postgresql-password = local.postgresql-password
       postgresql-database = local.postgresql-database
       graphile-password = local.graphile-password
+      graphile-jwt-secret = local.graphile-jwt-secret
       react-app-graphql-uri = local.react-app-graphql-uri
     }
 }
