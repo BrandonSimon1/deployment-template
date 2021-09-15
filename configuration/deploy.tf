@@ -72,6 +72,7 @@ locals {
   react-app-graphql-uri = "backend.${var.namespace}.svc.cluster.local:4000"
   graphile-password = random_password.default-graphile-password
   graphile-jwt-secret = random_string.graphile-jwt-secret
+  postgresql-host = "postgresql.${var.namespace}.svc.cluster.local"
   postgresql-user = "postgres"
   postgresql-database = "postgres"
   postgresql-password = random_password.postgresql-password
@@ -112,6 +113,7 @@ data "kubectl_path_documents" "manifests" {
       namespace = var.namespace
       image-tag = var.image-tag
       image-name-base = var.image-name-base
+      postgresql-host = local.postgresql-host
       postgresql-user = local.postgresql-user
       postgresql-password = local.postgresql-password
       postgresql-database = local.postgresql-database

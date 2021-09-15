@@ -63,18 +63,15 @@ spec:
         #   failureThreshold: 3
         #   periodSeconds: 10
         env:
-        - name: PGUSER 
-          value: ${postgresql-user}
-        - name: PGPASSWORD 
-          value: ${postgresql-password}
+        - name: PGHOST 
+          value: ${postgresql-host}
         - name: PGDATABASE 
           value: ${postgresql-database}
         - name: GRAPHILE_PASSWORD 
           value: ${graphile-password}
+        - name: GRAPHILE_JWT_SECRET 
+          value: ${graphile-jwt-secret}
         ports:
         - containerPort: 4000 
           name:  ${app-name}-backend
-        volumeMounts:
-        - name: localtime
-          mountPath: /etc/localtime
       restartPolicy: Always
