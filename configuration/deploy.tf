@@ -48,6 +48,14 @@ variable "image-tag" {
   type = string
 }
 
+variable "frontend-external-host" {
+  type = string
+}
+
+variable "backend-external-host" {
+  type = string
+}
+
 variable "kubeconfig" {
   type = string
   default = "~/.kube/config"
@@ -120,6 +128,8 @@ data "kubectl_path_documents" "manifests" {
       graphile-password = local.graphile-password
       graphile-jwt-secret = local.graphile-jwt-secret
       react-app-graphql-uri = local.react-app-graphql-uri
+      backend-external-host = var.backend-external-host
+      frontend-external-host = var.frontend-external-host
     }
 }
 
