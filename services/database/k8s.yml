@@ -15,7 +15,6 @@ spec:
       containers:
       - name: ${app-name}-database
         image: ${image-name-base}-database:${image-tag} 
-        command: ['sh', '-c', 'python3 manage.py makemigrations && python3 manage.py migrate']
         env:
         - name: PGHOST 
           value: ${postgresql-host}
