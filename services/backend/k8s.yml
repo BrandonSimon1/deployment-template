@@ -37,7 +37,7 @@ spec:
     spec:
       containers:
       - name:  ${app-name}-backend
-        image:  ${app-name}-backend:latest
+        image:  ${image-name-base}-backend:${image-tag}
         resources:
           requests:
             cpu: 100m
