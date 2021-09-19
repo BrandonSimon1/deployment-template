@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: ${app-name}-database
-        image: python:3.7.6-alpine3.10
+        image: ${image-name-base}-database:${image-tag} 
         command: ['sh', '-c', 'python3 manage.py makemigrations && python3 manage.py migrate']
         env:
         - name: PGHOST 
@@ -25,12 +25,4 @@ spec:
           value: ${postgresql-password}
         - name: PGDATABASE 
           value: ${postgresql-database}
-        volumeMounts:
-        - name: localtime
-          mountPath: /etc/localtime
-      volumes:
-      - name: localtime
-        hostPath:
-          path: /usr/share/zoneinfo/Asia/Shanghai
       restartPolicy: OnFailure
-      dnsPolicy: ClusterFirst
