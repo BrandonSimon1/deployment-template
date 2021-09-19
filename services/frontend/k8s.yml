@@ -1,54 +1,43 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: MYAPP
-  namespace: default
+  name: ${app-name}-frontend
+  namespace: ${namespace}
 spec:
   selector:
-    app: MYAPP
-  type: ClusterIP
-  sessionAffinity: None
-  sessionAffinityConfig:
-    clientIP:
-      timeoutSeconds: 10800
+    app: ${app-name}-frontend
+  type: LoadBalancer 
   ports:
-  - name: MYAPP
+  - name: ${app-name}-frontend
     protocol: TCP
-    port: 
-    targetPort: 
-    # If you set the `spec.type` field to `NodePort` and you want a specific port number,
-    # you can specify a value in the `spec.ports[*].nodePort` field.
-    nodePort: 
+    port: 80
+    targetPort: 3000
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name:  MYAPP
-  namespace: default
+  name:  ${app-name}-frontend
+  namespace: ${namespace}
   labels:
-    app:  MYAPP
+    app:  ${app-name}-frontend
 spec:
   selector:
     matchLabels:
-      app: MYAPP
-  replicas: 1
+      app: ${app-name}-frontend
+  replicas: 2
   strategy:
     rollingUpdate:
-      maxSurge: 25%
-      maxUnavailable: 25%
+      maxSurge: 50%
+      maxUnavailable: 50%
     type: RollingUpdate
   template:
     metadata:
       labels:
-        app:  MYAPP
+        app:  ${app-name}-frontend
     spec:
-      # initContainers:
-        # Init containers are exactly like regular containers, except:
-          # - Init containers always run to completion.
-          # - Each init container must complete successfully before the next one starts.
       containers:
-      - name:  MYAPP
-        image:  MYAPP:latest
+      - name:  ${app-name}-frontend
+        image:  ${image-name-base}-frontend:${image-tag}
         resources:
           requests:
             cpu: 100m
@@ -56,37 +45,27 @@ spec:
           limits:
             cpu: 100m
             memory: 100Mi
-        livenessProbe:
-          tcpSocket:
-            port: 80
-          initialDelaySeconds: 5
-          timeoutSeconds: 5
-          successThreshold: 1
-          failureThreshold: 3
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /_status/healthz
-            port: 80
-          initialDelaySeconds: 5
-          timeoutSeconds: 2
-          successThreshold: 1
-          failureThreshold: 3
-          periodSeconds: 10
+        # livenessProbe:
+        #   tcpSocket:
+        #     port: 80
+        #   initialDelaySeconds: 5
+        #   timeoutSeconds: 5
+        #   successThreshold: 1
+        #   failureThreshold: 3
+        #   periodSeconds: 10
+        # readinessProbe:
+        #   httpGet:
+        #     path: /_status/healthz
+        #     port: 80
+        #   initialDelaySeconds: 5
+        #   timeoutSeconds: 2
+        #   successThreshold: 1
+        #   failureThreshold: 3
+        #   periodSeconds: 10
         env:
-        - name: DB_HOST
-          valueFrom:
-            configMapKeyRef:
-              name: MYAPP
-              key: DB_HOST
+          - name: REACT_APP_GRAPHQL_URI
+            value: ${react-app-graphql-uri}
         ports:
-        - containerPort:  80
-          name:  MYAPP
-        volumeMounts:
-        - name: localtime
-          mountPath: /etc/localtime
-      volumes:
-        - name: localtime
-          hostPath:
-            path: /usr/share/zoneinfo/Asia/Shanghai
+        - containerPort: 3000 
+          name:  ${app-name}-frontend
       restartPolicy: Always
