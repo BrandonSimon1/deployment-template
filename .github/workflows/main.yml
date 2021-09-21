@@ -164,4 +164,6 @@ jobs:
             -var app-name=${{ github.repository }} \ 
             -var kubeconfig=${{ secrets.KUBECONFIG }} \
             -var image-name-base=ghcr.io/${{github.actor}}/${{github.repository}} \
-            -var image-tag=${{ steps.meta.outputs.tags }}
+            -var image-tag=${{ steps.meta.outputs.tags }} \
+            -var frontend-external-host=${{ secrets.FRONTEND_EXTERNAL_HOST }} \
+            -var backend-external-host=${{ secrets.BACKEND_EXTERNAL_HOST }} 
